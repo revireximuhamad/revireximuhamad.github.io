@@ -1,3 +1,54 @@
+<?php
+$errors = [];
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Get POST data
+    $name = isset($_POST['name']) ? strip_tags(trim($_POST['name'])) : '';
+    $email = isset($_POST['email']) ? trim($_POST['email']) : '';
+    $message = isset($_POST['message']) ? strip_tags(trim($_POST['message'])) : '';
+
+    // Validate form fields
+    if (empty($name)) {
+        $errors[] = 'Name is empty';
+    }
+
+    if (empty($email)) {
+        $errors[] = 'Email is empty';
+    } else if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $errors[] = 'Email is invalid';
+    }
+
+    if (empty($message)) {
+        $errors[] = 'Message is empty';
+    }
+
+    // If no errors, send email
+    if (empty($errors)) {
+        // Recipient email address (replace with your own)
+        $recipient = "recipient@example.com";
+
+        // Additional headers
+        $headers = "From: $name <$email>";
+
+        // Send email
+        if (mail($recipient, $message, $headers)) {
+            echo "Email sent successfully!";
+        } else {
+            echo "Failed to send email. Please try again later.";
+        }
+    } else {
+        // Display errors
+        echo "The form contains the following errors:<br>";
+        foreach ($errors as $error) {
+            echo "- $error<br>";
+        }
+    }
+} else {
+    // Not a POST request, display a 403 forbidden error
+    header("HTTP/1.1 403 Forbidden");
+    echo "You are not allowed to access this page.";
+}
+?>
      <!doctype html>
     <html lang="id">
         <head>
@@ -152,8 +203,34 @@
 		<strong class="site-footer-title d-block mb-3">Tentang</strong> <p class="mb-2"> Revi Rexi adalah seorang dengan keahlian IT. Jangan ragu untuk menghubungi saya. </p> 
 		<strong class="site-footer-title d-block mt-4 mb-3">Email</strong> <p> <a href="mailto:revireximuhamad@gmail.com"> revireximuhamad@gmail.com </a> </p> 
 		<strong class="site-footer-title d-block mt-4 mb-3">Telp</strong> <p class="mb-0"> <a href="tel: 085218884044"> 085218884044 </a> </p> </div> </div> 
-		<div class="col-lg-6 col-12 mt-5 mt-lg-0"> 
-		<form action="#" method="get" class="custom-form contact-form" role="form"> 
+		<div class="col-lg-6 col-12 mt-5 mt-lg-0">
+<?php
+
+$errors = [];
+
+if (!empty($_POST)) {
+  $name = $_POST['name'];
+  $email = $_POST['email'];
+  $inlineCheckbox1 = $_POST['inlineCheckbox1'];
+  $inlineCheckbox2 = $_POST['inlineCheckbox2'];
+  $inlineCheckbox3 = $_POST['inlineCheckbox3'];
+  $inlineCheckbox4 = $_POST['inlineCheckbox4'];
+ 
+  if (empty($name)) {
+      $errors[] = 'Nama Harus diisi!';
+  }
+
+  if (empty($email)) {
+      $errors[] = 'Email Harus diisi!';
+  } else if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+      $errors[] = 'Email tidak sesuai';
+  }
+
+  if (empty($message)) {
+      $errors[] = 'Pesan Harus diisi!';
+  }
+} ?>		
+		<form action="index.php" method="post" class="custom-form contact-form" role="form"> 
 		<div class="row"> <div class="col-lg-6 col-md-6 col-12"> <div class="form-floating"> 
 		<input type="text" name="name" id="name" class="form-control" placeholder="Name" required=""> 
 		<label for="floatingInput">Nama</label> </div> </div> <div class="col-lg-6 col-md-6 col-12"> 
@@ -178,7 +255,7 @@
 		<div class="form-floating"> 
 		<textarea class="form-control" id="message" name="message" placeholder="Tell me about the project"></textarea> 
 		<label for="floatingTextarea">Beritahu saya terkait kebutuhan anda.</label> </div> </div> <div class="col-lg-3 col-12 ms-auto"> 
-		<button type="submit" class="form-control">Kirim</button> </div> </div> </form> </div> </div> </div> </section> </main> 
+		<button type="submit" value="send" class="form-control">Kirim</button> </div> </div> </form> </div> </div> </div> </section> </main> 
 		<footer class="site-footer"> <div class="container"> <div class="row"> <div class="col-lg-12 col-12"> <div class="copyright-text-wrap"> 
 		<p class="mb-0"> <span class="copyright-text">Copyright © 2025 <a href="#">First Portfolio</a> Company. All rights reserved.</span> Design: <a rel="sponsored" href="https://templatemo.com" target="_blank">TemplateMo</a> </p> </div> </div> </div> </div> </footer> 
 		<!-- JAVASCRIPT FILES --> 

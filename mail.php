@@ -1,55 +1,40 @@
-<?php
-$errors = [];
-
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Get POST data
-    $name = isset($_POST['name']) ? strip_tags(trim($_POST['name'])) : '';
-    $email = isset($_POST['email']) ? trim($_POST['email']) : '';
-    $inlineCheckbox1 = isset($_POST['inlineCheckbox1']) ? strip_tags(trim($_POST['inlineCheckbox1'])) : '';
-	$inlineCheckbox2 = isset($_POST['inlineCheckbox2']) ? strip_tags(trim($_POST['inlineCheckbox2'])) : '';
-	$inlineCheckbox3 = isset($_POST['inlineCheckbox3']) ? strip_tags(trim($_POST['inlineCheckbox3'])) : '';
-	$inlineCheckbox4 = isset($_POST['inlineCheckbox4']) ? strip_tags(trim($_POST['inlineCheckbox4'])) : '';
-	$message = isset($_POST['message']) ? strip_tags(trim($_POST['message'])) : '';
-
-    // Validate form fields
-    if (empty($name)) {
-        $errors[] = 'Name is empty';
+<?php 
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+ 
+ 
+require 'PHPMailer/src/Exception.php';
+require 'PHPMailer/src/PHPMailer.php';
+require 'PHPMailer/src/SMTP.php';
+ 
+$email = htmlspecialchars($_POST['email']);
+$nama = htmlspecialchars($_POST['nama']);
+$pesan = htmlspecialchars($_POST['pesan']);
+ 
+$mail = new PHPMailer(true);
+ 
+try {                       
+    $mail->SMTPDebug = 2;  
+    $mail->isSMTP();
+    $mail->Host       = 'smtp.gmail.com';
+    $mail->SMTPAuth   = true;
+    // email aktif yang sebelumnya di setting
+    $mail->Username   = 'lusimarliani6@gmail.com';
+    // password yang sebelumnya di simpan
+    $mail->Password   = 'lusimarliani11';
+    $mail->SMTPSecure = 'tls';
+    $mail->Port       = 587;  
+ 
+    $mail->setFrom('mail@gmail.com', 'tutorial malasngoding');
+     $mail->addAddress($email); 
+        $mail->isHTML(true);
+        $mail->Subject = $judul;    
+        $mail->Body = $pesan;
+        $mail->send();
+        header("location:index.php?alert=berhasil");
+ 
+    }catch (Exception $e) {
+    	header("location:index.php?alert=gagal"); 	
     }
-
-    if (empty($email)) {
-        $errors[] = 'Email is empty';
-    } else if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $errors[] = 'Email is invalid';
-    }
-
-    if (empty($message)) {
-        $errors[] = 'Message is empty';
-    }
-
-    // If no errors, send email
-    if (empty($errors)) {
-        // Recipient email address (replace with your own)
-        $recipient = "recipient@example.com";
-
-        // Additional headers
-        $headers = "From: $name <$email>";
-
-        // Send email
-        if (mail($recipient, $message, $headers)) {
-            echo "Email sent successfully!";
-        } else {
-            echo "Failed to send email. Please try again later.";
-        }
-    } else {
-        // Display errors
-        echo "The form contains the following errors:<br>";
-        foreach ($errors as $error) {
-            echo "- $error<br>";
-        }
-    }
-} else {
-    // Not a POST request, display a 403 forbidden error
-    header("HTTP/1.1 403 Forbidden");
-    echo "You are not allowed to access this page.";
-}
+ 
 ?>
